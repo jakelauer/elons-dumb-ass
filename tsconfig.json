@@ -1,26 +1,28 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "types": [
-        "node"
-      ],
-      "noImplicitAny": false,
-      "removeComments": true,
-      "preserveConstEnums": true,
-      "sourceMap": true,
-      "forceConsistentCasingInFileNames": true,
-      "outDir": "dist",
-      "declaration": true,
-      "typeRoots": [
-        "node_modules/@types"
-      ]
-    },
-    "include": [
-      "src/**/*.ts"
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "types": [
+      "node"
     ],
-    "exclude": [
-      "node_modules"
+    "noImplicitAny": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "declaration": true,
+    "typeRoots": [
+      "node_modules/@types"
     ]
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "build.ts",
+    "twitter-text.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

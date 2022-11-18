@@ -21,6 +21,7 @@
   "homepage": "https://github.com/jakelauer/elons-dumb-ass#readme",
   "dependencies": {
     "7zip-bin": "^5.2.0",
+    "@ambassify/twitter-text": "^3.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^18.11.9",
     "dotenv": "^16.0.3",

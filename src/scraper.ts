@@ -1,3 +1,4 @@
+import twitter from '@ambassify/twitter-text';
 import { decode } from 'html-entities';
 import { TweetV2, TwitterApi } from 'twitter-api-v2';
 
@@ -87,9 +88,17 @@ export const scrapeAndPost = async () => {
 
 const doTweet = async ({newTweetText, tweet}: NewTweetObj) => {
     console.log("Tweeting: " + newTweetText);
+    
+    const parsed = twitter.txt.parseTweet(newTweetText);
+    if(parsed.weightedLength > 275)
+    {
+        console.log("Skipping - too long");
+        return;
+    }
 
     const result = await readWriteClient.v1.tweet(newTweetText, {
-        in_reply_to_status_id: tweet.id
+        in_reply_to_status_id: tweet.id,
+        auto_populate_reply_metadata: true
     });
 
     return result;
