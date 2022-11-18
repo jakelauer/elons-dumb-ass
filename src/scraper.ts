@@ -1,5 +1,11 @@
 import { decode } from 'html-entities';
-import { TwitterApi } from 'twitter-api-v2';
+import { TweetV2, TwitterApi } from 'twitter-api-v2';
+
+interface NewTweetObj
+{
+    tweet: TweetV2,
+    newTweetText: string
+}
 
 const {
     API_KEY,
@@ -47,8 +53,8 @@ export const scrapeAndPost = async () => {
         .filter(a => a.text.match(/twitter/gi))
         .filter(a => !a.attachments?.poll_ids);
 
-    const fixedTweets = tweetsMatchingTwitter.map(a => {
-        let output = a.text;
+    const fixedTweets = tweetsMatchingTwitter.map(tweet => {
+        let output = tweet.text;
 
         if (output.startsWith("Twitter")) {
             output = output.replace("Twitter", "My dumb ass");
@@ -60,7 +66,12 @@ export const scrapeAndPost = async () => {
 
         console.log(output, decode(output))
 
-        return decode(output);
+        const newTweetText = decode(output);
+
+        return {
+            newTweetText,
+            tweet
+        } as NewTweetObj
     });
 
     const latestTweets = fixedTweets.slice(0, 2);
@@ -74,10 +85,12 @@ export const scrapeAndPost = async () => {
     lastSeenTweet = BigInt(timeline.data.data[0].id);
 }
 
-const doTweet = async (tweetText: string) => {
-    console.log("Tweeting: " + tweetText);
+const doTweet = async ({newTweetText, tweet}: NewTweetObj) => {
+    console.log("Tweeting: " + newTweetText);
 
-    const result = await readWriteClient.v1.tweet(tweetText);
+    const result = await readWriteClient.v1.tweet(newTweetText, {
+        in_reply_to_status_id: tweet.id
+    });
 
     return result;
 }
