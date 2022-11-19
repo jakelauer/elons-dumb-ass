@@ -1,11 +1,12 @@
-import twitter from '@ambassify/twitter-text';
+import { parseTweet } from '@ambassify/twitter-text';
 import { decode } from 'html-entities';
-import { TweetV2, TwitterApi } from 'twitter-api-v2';
+import { TweetV2, TwitterApi, UserV2Result } from 'twitter-api-v2';
 
 interface NewTweetObj
 {
     tweet: TweetV2,
-    newTweetText: string
+    newTweetText: string,
+    user: UserV2Result
 }
 
 const {
@@ -65,13 +66,12 @@ export const scrapeAndPost = async () => {
             .replace(/\. Twitter/, ". My dumb ass")
             .replace(/twitter/gi, "my dumb ass");
 
-        console.log(output, decode(output))
-
         const newTweetText = decode(output);
 
         return {
             newTweetText,
-            tweet
+            tweet,
+            user: selfUser
         } as NewTweetObj
     });
 
@@ -79,27 +79,30 @@ export const scrapeAndPost = async () => {
 
     latestTweets.forEach(t => {
         doTweet(t).then(result => {
-            console.log(result);
+            console.log("Tweeted and retweeted!");
         })
     })
 
     lastSeenTweet = BigInt(timeline.data.data[0].id);
 }
 
-const doTweet = async ({newTweetText, tweet}: NewTweetObj) => {
+const doTweet = async ({newTweetText, tweet, user}: NewTweetObj) => {
     console.log("Tweeting: " + newTweetText);
     
-    const parsed = twitter.txt.parseTweet(newTweetText);
+    const parsed = parseTweet(newTweetText);
     if(parsed.weightedLength > 275)
     {
         console.log("Skipping - too long");
         return;
     }
 
-    const result = await readWriteClient.v1.tweet(newTweetText, {
-        in_reply_to_status_id: tweet.id,
-        auto_populate_reply_metadata: true
+    const result = await readWriteClient.v2.tweet(newTweetText, {
+        reply: {
+            in_reply_to_tweet_id: tweet.id,
+        }
     });
+
+    await readWriteClient.v2.retweet(user.data.id, result.data.id);
 
     return result;
 }

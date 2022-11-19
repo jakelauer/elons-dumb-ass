@@ -25,6 +25,7 @@ fs.mkdirSync(outputDir);
 fs.copySync("./src", path.join(outputDir, "src"));
 fs.copySync("./package.json", path.join(outputDir, "package.json"));
 fs.copySync("./tsconfig.json", path.join(outputDir, "tsconfig.json"));
+fs.copySync("./twitter-text.d.ts", path.join(outputDir, "twitter-text.d.ts"));
 fs.copySync("./yarn.lock", path.join(outputDir, "yarn.lock"));
 
 console.log("Zipping output...");
